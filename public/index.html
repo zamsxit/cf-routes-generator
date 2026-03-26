@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XVoid CF Manager</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background-color: #0b0f19; 
+            color: #f8fafc; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .glass-panel { 
+            width: 100%; 
+            max-width: 500px; 
+            background: rgba(15, 23, 42, 0.4); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 16px; 
+            padding: 32px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); 
+            animation: fadein 0.6s ease-out; 
+        }
+
+        @keyframes fadein { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        h2 { 
+            text-align: center; 
+            margin-bottom: 28px; 
+            font-weight: 600; 
+            font-size: 1.5rem; 
+            letter-spacing: -0.02em; 
+            color: #f1f5f9; 
+        }
+
+        .form-group { margin-bottom: 20px; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 0.875rem; 
+            font-weight: 500; 
+            color: #94a3b8; 
+            letter-spacing: 0.01em; 
+        }
+
+        input { 
+            width: 100%; 
+            padding: 12px 16px; 
+            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 8px; 
+            color: #f8fafc; 
+            font-size: 1rem; 
+            font-family: inherit; 
+            transition: all 0.3s ease; 
+            outline: none; 
+        }
+
+        input:focus { 
+            border-color: #2563eb; 
+            background: rgba(15, 23, 42, 0.8); 
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); 
+        }
+
+        .btn-group { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 28px; 
+        }
+
+        button { 
+            flex: 1; 
+            padding: 12px 16px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            font-weight: 500; 
+            font-family: inherit; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            letter-spacing: 0.01em; 
+        }
+
+        .btn-primary { 
+            background-color: #2563eb; 
+            color: #ffffff; 
+        }
+
+        .btn-primary:hover { 
+            background-color: #1d4ed8; 
+            transform: translateY(-1px); 
+        }
+
+        .btn-secondary { 
+            background-color: transparent; 
+            color: #cbd5e1; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+
+        .btn-secondary:hover { 
+            background-color: rgba(255, 255, 255, 0.05); 
+            color: #ffffff; 
+            transform: translateY(-1px); 
+        }
+
+        .output-wrapper { 
+            position: relative; 
+            margin-top: 24px; 
+        }
+
+        .output-box { 
+            background: rgba(11, 15, 25, 0.8); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 8px; 
+            padding: 16px; 
+            min-height: 120px; 
+            max-height: 250px; 
+            overflow-y: auto; 
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
+            font-size: 0.85rem; 
+            white-space: pre-wrap; 
+            line-height: 1.6; 
+            color: #e2e8f0; 
+        }
+
+        .copy-btn { 
+            position: absolute; 
+            top: 12px; 
+            right: 12px; 
+            background: #334155; 
+            color: #f8fafc; 
+            border: none; 
+            padding: 6px 12px; 
+            font-size: 0.75rem; 
+            font-weight: 500; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+
+        .copy-btn:hover { background: #475569; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body>
+    <div class="glass-panel">
+        <h2>Email Routing</h2>
+        
+        <div class="form-group">
+            <label>API Token</label>
+            <input type="password" id="apiToken">
+        </div>
+        <div class="form-group">
+            <label>Zone ID</label>
+            <input type="text" id="zoneId">
+        </div>
+        <div class="form-group">
+            <label>Destination Email</label>
+            <input type="email" id="destEmail">
+        </div>
+        <div class="form-group">
+            <label>Amount</label>
+            <input type="number" id="targetCount" value="10" min="1">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" onclick="createRoutes()">Generate</button>
+            <button class="btn-secondary" onclick="showList()">Load List</button>
+        </div>
+
+        <div class="output-wrapper">
+            <button class="copy-btn" onclick="copyOutput()">Copy</button>
+            <div class="output-box" id="output">Waiting for action...</div>
+        </div>
+    </div>
+
+    <script>
+        const DOMAIN = "cloudtech.biz.id";
+
+        function maskEmail(email) {
+            if (!email.includes("@")) return email;
+            const [user, domain] = email.split("@");
+            if (user.length <= 2) return `${user}***@${domain}`;
+            return `${user.substring(0, 2)}******${user.substring(user.length - 2)}@${domain}`;
+        }
+
+        function logOutput(msg, append = true) {
+            const out = document.getElementById("output");
+            if (append) {
+                out.textContent += msg + "\n";
+            } else {
+                out.textContent = msg + "\n";
+            }
+            out.scrollTop = out.scrollHeight;
+        }
+
+        async function getRules(token, zoneId) {
+            try {
+                const res = await fetch('/api/get-rules', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, zoneId })
+                });
+                const data = await res.json();
+                return data.result || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        async function showList() {
+            const token = document.getElementById("apiToken").value;
+            const zoneId = document.getElementById("zoneId").value;
+            
+            if (!token || !zoneId) {
+                logOutput("Error: API Token and Zone ID required.", false);
+                return;
+            }
+
+            logOutput("Loading data...", false);
+            const rules = await getRules(token, zoneId);
+            
+            if (rules.length === 0) {
+                logOutput("No routes found.", false);
+                return;
+            }
+
+            logOutput(`--- DAFTAR ROUTE ---`, false);
+            rules.forEach((r, i) => {
+                const emailAlias = r.matchers && r.matchers[0] ? r.matchers[0].value : 'Catch-all';
+                const destRaw = r.actions && r.actions[0] ? r.actions[0].value[0] : 'N/A';
+                logOutput(`${i + 1}. ${emailAlias} -> ${maskEmail(destRaw)}`);
+            });
+        }
+
+        async function createRoutes() {
+            const token = document.getElementById("apiToken").value;
+            const zoneId = document.getElementById("zoneId").value;
+            const destEmail = document.getElementById("destEmail").value;
+            const targetCount = parseInt(document.getElementById("targetCount").value) || 10;
+
+            if (!token || !zoneId || !destEmail) {
+                logOutput("Error: Complete all inputs.", false);
+                return;
+            }
+
+            logOutput(`Preparing ${targetCount} routes...`, false);
+            const existingRules = await getRules(token, zoneId);
+            const existingPrefixes = new Set();
+            
+            existingRules.forEach(r => {
+                if (r.matchers && r.matchers[0] && r.matchers[0].value) {
+                    existingPrefixes.add(r.matchers[0].value.split('@')[0]);
+                }
+            });
+
+            let count = 0;
+
+            while (count < targetCount) {
+                const num = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+                const prefix = `ivaskuuu${num}`;
+
+                if (!existingPrefixes.has(prefix)) {
+                    const payload = {
+                        actions: [{ type: "forward", value: [destEmail] }],
+                        matchers: [{ field: "to", type: "literal", value: `${prefix}@${DOMAIN}` }],
+                        name: `Route ${prefix}`,
+                        enabled: true
+                    };
+
+                    try {
+                        const res = await fetch('/api/create-route', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token, zoneId, payload })
+                        });
+
+                        if (res.ok) {
+                            logOutput(`DONE: ${prefix}@${DOMAIN} -> ${maskEmail(destEmail)}`);
+                            existingPrefixes.add(prefix);
+                            count++;
+                        } else {
+                            logOutput(`FAILED: ${prefix} (Error API)`);
+                            break;
+                        }
+                    } catch (e) {
+                        logOutput(`FAILED: Connection error.`);
+                        break;
+                    }
+                }
+            }
+            logOutput(`\nSuccess! ${count} routes added.`);
+        }
+
+        function copyOutput() {
+            const text = document.getElementById("output").innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector(".copy-btn");
+                btn.innerText = "Copied!";
+                setTimeout(() => btn.innerText = "Copy", 2000);
+            });
+        }
+    </script>
+</body>
+</html>
