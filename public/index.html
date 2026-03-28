@@ -209,10 +209,20 @@
             </div>
             <div class="form-group">
                 <label>Destination Email</label>
-                <input type="email" id="destEmail">
+                <input type="email" id="destEmail" placeholder="you@gmail.com">
             </div>
+            
+            <div class="form-group">
+                <label>Custom Prefix</label>
+                <input type="text" id="customPrefix" value="ivaskuuu" placeholder="Kosongkan jika hanya ingin angka">
+            </div>
+            <div class="form-group">
+                <label>Jumlah Angka Random</label>
+                <input type="number" id="digitLength" value="4" min="0" max="15">
+            </div>
+            
             <div class="form-group full-width">
-                <label>Amount</label>
+                <label>Amount (Jumlah Rute)</label>
                 <input type="number" id="targetCount" value="10" min="1">
             </div>
         </div>
@@ -311,6 +321,10 @@
             const zoneId = document.getElementById("zoneId").value;
             const domain = document.getElementById("domain").value;
             const destEmail = document.getElementById("destEmail").value;
+            
+            // Ambil nilai dari input baru
+            const customPrefix = document.getElementById("customPrefix").value;
+            const digitLength = parseInt(document.getElementById("digitLength").value) || 0;
             const targetCount = parseInt(document.getElementById("targetCount").value) || 10;
 
             if (!token || !zoneId || !domain || !destEmail) return alert("Complete all inputs.");
@@ -328,8 +342,14 @@
             let count = 0;
 
             while (count < targetCount) {
-                const num = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-                const prefix = `ivaskuuu${num}`;
+                // Generate angka random sesuai jumlah digit yang diminta
+                let randomNumbers = "";
+                for(let i = 0; i < digitLength; i++) {
+                    randomNumbers += Math.floor(Math.random() * 10).toString();
+                }
+                
+                // Gabungkan custom prefix dengan angka random
+                const prefix = `${customPrefix}${randomNumbers}`;
 
                 if (!existingPrefixes.has(prefix)) {
                     const payload = {
@@ -382,4 +402,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
